@@ -11,6 +11,7 @@ demo-website/
 ├── deploy.sh       # Скрипт автоматического развертывания
 ├── test.sh         # Тестирование ракетки на сайте
 ├── install-nginx.sh # Скрипт установки nginx
+├── install-frp.sh # Скрипт установки и настройки frp
 └── README.md       # Документация проекта
 ```
 
@@ -26,15 +27,17 @@ demo-website/
    ```bash
    sudo ./install-nginx.sh
    ```
-
-3. Проверьте что сайт готов к запуску:
+   
+3. Установите frp: (токен может измениться!)
    ```bash
-   ./test.sh
+   sudo ./install-frp.sh course.prafdin.ru mytoken prafdin
    ```
 
-4. Запустите развертывание:
+4. Запустите webhook сервер:
    ```bash
-   ./deploy.sh
+   python3 webhook-server.py
    ```
 
-5. Откройте в браузере: http://localhost:8181
+5. Настройте webhook на GitHub репозиторий: http://webhook.prafdin.course.prafdin.ru/
+
+6. Сайт должен быть доступен по адресу http://app.prafdin.course.prafdin.ru/
