@@ -71,7 +71,7 @@ name = "app-$USERNAME"
 type = "http"
 localIP = "127.0.0.1"
 localPort = 8181
-customDomains = ["app.$USERNAME.$SERVER_ADDR"]
+customDomains = ["app.$USERNAME.$SERVER_ADDR", "app-test.$USERNAME.$SERVER_ADDR"]
 EOF
 
 echo "✅ Конфигурация сгенерирована в /etc/frp/frpc.toml"
@@ -101,7 +101,7 @@ echo "   sudo nano /etc/frp/frpc.toml   # Редактировать конфи�
 echo ""
 echo "🌐 URLs для вашей конфигурации:"
 echo "   Webhook URL: http://webhook.$USERNAME.$SERVER_ADDR"
-echo "   App URL: http://app.$USERNAME.$SERVER_ADDR"
+echo "   App URLs: http://app.$USERNAME.$SERVER_ADDR, http://app-test.$USERNAME.$SERVER_ADDR"
 echo ""
 echo "⚙️  Для изменения конфигурации отредактируйте:"
 echo "   /etc/frp/frpc.toml"

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ENVIRONMENT=${1:-production}
+
 echo "🚀 Начинаем развертывание демо-сайта..."
 
 # Проверяем, установлен ли nginx
@@ -8,12 +10,20 @@ if ! command -v nginx &> /dev/null; then
     exit 1
 fi
 
+if [ "$ENVIRONMENT" = "develop" ]; then
+    DEPLOY_DIR="/var/www/demo-test"
+    echo "🧪 Развертывание в ТЕСТОВОЕ окружение"
+else
+    DEPLOY_DIR="/var/www/demo"
+    echo "🏭 Развертывание в ПРОДАКШН окружение"
+fi
+
 # Создаем директорию для сайта
-sudo mkdir -p /var/www/demo
+sudo mkdir -p $DEPLOY_DIR
 
 # Копируем файлы
-echo "📁 Копируем файлы сайта..."
-sudo cp index.html /var/www/demo/
+echo "📁 Копируем файлы сайта в $DEPLOY_DIR..."
+sudo cp index.html $DEPLOY_DIR/
 
 # Копируем конфигурацию nginx
 echo "⚙️  Применяем конфигурацию nginx..."
