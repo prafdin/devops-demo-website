@@ -114,10 +114,18 @@ class WebhookHandler(BaseHTTPRequestHandler):
         print(f"   👤 Автор: {pusher}")
         print(f"   📊 Коммитов: {len(commits)}")
 
+        if branch in ['develop']:
+            environment = "develop"
+            env_name = "ТЕСТОВОЕ"
+        else:
+            environment = "production"
+            env_name = "ПРОДАКШН"
+
         # Имитируем автоматические действия
         print(f"   🚀 ЗАПУСКАЕМ АВТОМАТИЗАЦИЮ:")
         print(f"      - Запуск тестов для ветки {branch}")
         print(f"      - Проверка качества кода")
+        print(f"      - Деплой в {env_name} окружение")
 
         with tempfile.TemporaryDirectory() as tmpdir:
             print(f"Временная директория: {tmpdir}")
@@ -150,7 +158,7 @@ class WebhookHandler(BaseHTTPRequestHandler):
                 # Только если тесты прошли - запускаем деплой
                 print(f"      - Запуск деплоя...")
                 subprocess.run(
-                    ["./deploy.sh"],
+                    ["./deploy.sh", environment],
                     cwd=tmpdir,
                     check=True
                 )
