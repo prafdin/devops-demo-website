@@ -1,0 +1,41 @@
+name: DevOps Demo Pipeline
+
+on:
+  push:
+    branches: [ cicd-demo, develop ]
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout код
+      uses: actions/checkout@v4
+      
+    - name: Запуск тестов
+      run: |
+        echo "🧪 Запуск тестов на GitHub runner..."
+        ./test.sh
+      
+    - name: Setup SSH Agent
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    
+    - name: Запуск деплоя
+      env:
+        DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+        DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+        DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
+      run: |
+        # Определяем окружение по ветке
+        if [ "${{ github.ref_name }}" = "develop" ]; then
+          ENVIRONMENT="develop"
+          echo "🧪 Деплой в ТЕСТОВОЕ окружение"
+        else
+          ENVIRONMENT="production"
+          echo "🏭 Деплой в ПРОДАКШН окружение"
+        fi
+        
+        echo "🚀 Запуск деплоя через deploy.sh..."
+        ./deploy.sh $ENVIRONMENT
