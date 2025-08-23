@@ -1,0 +1,6 @@
+all:
+  hosts:
+    target:
+      ansible_host: course.prafdin.ru
+      ansible_port: 2022
+      ansible_user: user

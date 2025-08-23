@@ -1,0 +1,28 @@
+---
+- name: Setup Demo Website Environment
+  hosts: all
+  become: yes
+  
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+      
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+        
+    - name: Start and enable nginx service
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+        
+    - name: Create nginx log directory
+      file:
+        path: /var/log/nginx
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
