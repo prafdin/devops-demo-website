@@ -1,0 +1,22 @@
+# Git files
+.git
+.gitignore
+
+# Documentation
+README.md
+
+# Ansible files
+ansible/
+
+# Scripts
+deploy.sh
+test.sh
+install-frp.sh
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

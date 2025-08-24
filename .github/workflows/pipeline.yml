@@ -2,11 +2,14 @@ name: DevOps Demo Pipeline
 
 on:
   push:
-    branches: [ cm-demo, develop ]
+    branches: [ docker-demo, develop ]
 
 jobs:
   pipeline:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     
     steps:
     - name: Checkout код
@@ -16,15 +19,34 @@ jobs:
       run: |
         echo "🧪 Запуск тестов на GitHub runner..."
         ./test.sh
-      
+    
+    - name: Build Docker image
+      run: |
+        echo "🐳 Сборка Docker образа..."
+        docker build -t ghcr.io/${{ github.repository_owner }}/devops-demo-website:latest .
+        docker tag ghcr.io/${{ github.repository_owner }}/devops-demo-website:latest ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }}
+    
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Push Docker image
+      run: |
+        echo "📦 Отправка образа в registry..."
+        docker push ghcr.io/${{ github.repository_owner }}/devops-demo-website:latest
+        docker push ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }}
+    
     - name: Setup SSH Agent
       uses: webfactory/ssh-agent@v0.7.0
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     
-    - name: Setup environment with Ansible
+    - name: Setup Docker environment with Ansible
       run: |
-        echo "🔧 Настройка окружения через Ansible..."
+        echo "🔧 Настройка Docker через Ansible..."
         cd ansible
         ansible-playbook setup.yml
     
@@ -36,12 +58,13 @@ jobs:
       run: |
         # Определяем окружение по ветке
         if [ "${{ github.ref_name }}" = "develop" ]; then
-          ENVIRONMENT="develop"
+          DEPLOY_ENV="develop"
           echo "🧪 Деплой в ТЕСТОВОЕ окружение"
         else
-          ENVIRONMENT="production"
+          DEPLOY_ENV="production"
           echo "🏭 Деплой в ПРОДАКШН окружение"
         fi
         
-        echo "🚀 Запуск деплоя через deploy.sh..."
-        ./deploy.sh $ENVIRONMENT
+        echo "🚀 Запуск деплоя через Ansible..."
+        cd ansible
+        ansible-playbook deploy.yml -e deploy_env=$DEPLOY_ENV

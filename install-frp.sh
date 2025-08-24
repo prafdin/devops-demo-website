@@ -65,13 +65,21 @@ localIP = "127.0.0.1"
 localPort = 8080
 customDomains = ["webhook.$USERNAME.$SERVER_ADDR"]
 
-# Прокси для веб-приложения
+# Прокси для продакшн приложения
 [[proxies]]
 name = "app-$USERNAME"
 type = "http"
 localIP = "127.0.0.1"
 localPort = 8181
-customDomains = ["app.$USERNAME.$SERVER_ADDR", "app-test.$USERNAME.$SERVER_ADDR"]
+customDomains = ["app.$USERNAME.$SERVER_ADDR"]
+
+# Прокси для тестового приложения
+[[proxies]]
+name = "app-test-$USERNAME"
+type = "http"
+localIP = "127.0.0.1"
+localPort = 8080
+customDomains = ["app-test.$USERNAME.$SERVER_ADDR"]
 
 # Прокси для SSH (для GitHub Actions)
 [[proxies]]

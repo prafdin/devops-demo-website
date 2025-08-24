@@ -1,5 +1,5 @@
 ---
-- name: Setup Demo Website Environment
+- name: Setup Docker Environment
   hosts: all
   become: yes
   
@@ -8,21 +8,43 @@
       apt:
         update_cache: yes
       
-    - name: Install nginx
+    - name: Install required packages for Docker
       apt:
-        name: nginx
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
         state: present
         
-    - name: Start and enable nginx service
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+        
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+        
+    - name: Install Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+        update_cache: yes
+        
+    - name: Start and enable Docker service
       systemd:
-        name: nginx
+        name: docker
         state: started
         enabled: yes
         
-    - name: Create nginx log directory
-      file:
-        path: /var/log/nginx
-        state: directory
-        owner: www-data
-        group: www-data
-        mode: '0755'
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
