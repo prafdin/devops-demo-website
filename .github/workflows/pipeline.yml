@@ -2,7 +2,7 @@ name: DevOps Demo Pipeline
 
 on:
   push:
-    branches: [ docker-demo, develop ]
+    branches: [ compose-demo, develop ]
 
 jobs:
   pipeline:
@@ -20,11 +20,16 @@ jobs:
         echo "🧪 Запуск тестов на GitHub runner..."
         ./test.sh
     
-    - name: Build Docker image
+    - name: Build Docker images
       run: |
-        echo "🐳 Сборка Docker образа..."
+        echo "🐳 Сборка Docker образов..."
+        # Frontend (nginx)
         docker build -t ghcr.io/${{ github.repository_owner }}/devops-demo-website:latest .
         docker tag ghcr.io/${{ github.repository_owner }}/devops-demo-website:latest ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }}
+        
+        # Backend (Flask API)
+        docker build -t ghcr.io/${{ github.repository_owner }}/devops-demo-website-backend:latest ./backend
+        docker tag ghcr.io/${{ github.repository_owner }}/devops-demo-website-backend:latest ghcr.io/${{ github.repository_owner }}/devops-demo-website-backend:${{ github.sha }}
     
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v2
@@ -33,11 +38,16 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     
-    - name: Push Docker image
+    - name: Push Docker images
       run: |
-        echo "📦 Отправка образа в registry..."
+        echo "📦 Отправка образов в registry..."
+        # Frontend
         docker push ghcr.io/${{ github.repository_owner }}/devops-demo-website:latest
         docker push ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }}
+        
+        # Backend
+        docker push ghcr.io/${{ github.repository_owner }}/devops-demo-website-backend:latest
+        docker push ghcr.io/${{ github.repository_owner }}/devops-demo-website-backend:${{ github.sha }}
     
     - name: Setup SSH Agent
       uses: webfactory/ssh-agent@v0.7.0
@@ -67,4 +77,4 @@ jobs:
         
         echo "🚀 Запуск деплоя через Ansible..."
         cd ansible
-        ansible-playbook deploy.yml -e deploy_env=$DEPLOY_ENV
+        ansible-playbook deploy.yml -e deploy_env=$DEPLOY_ENV -e image_tag=${{ github.sha }}

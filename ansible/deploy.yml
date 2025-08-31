@@ -1,51 +1,71 @@
 ---
-- name: Deploy Docker Container
+- name: Deploy Multi-Container Application with Docker Compose
   hosts: all
   become: yes
   vars:
-    image_name: "ghcr.io/{{ github_repository_owner | default('prafdin') }}/devops-demo-website"
-    image_tag: latest
+    frontend_image: "ghcr.io/{{ github_repository_owner | default('prafdin') }}/devops-demo-website"
+    backend_image: "ghcr.io/{{ github_repository_owner | default('prafdin') }}/devops-demo-website-backend"
+    image_tag: "{{ image_tag | default('latest') }}"
     
   tasks:
-    - name: Pull Docker image from registry
-      docker_image:
-        name: "{{ image_name }}"
-        tag: "{{ image_tag }}"
-        source: pull
+    - name: Create deployment directory
+      file:
+        path: /opt/demo-website
+        state: directory
+        mode: '0755'
         
-    - name: Stop and remove existing container (if exists)
-      docker_container:
-        name: "demo-website-{{ deploy_env | default('production') }}"
+    - name: Stop existing services
+      community.docker.docker_compose_v2:
+        project_src: /opt/demo-website
         state: absent
       ignore_errors: yes
+        
+    - name: Copy docker-compose files
+      copy:
+        src: "{{ item.src }}"
+        dest: "/opt/demo-website/{{ item.dest }}"
+        mode: '0644'
+      loop:
+        - { src: "../docker-compose.yml", dest: "docker-compose.yml" }
+        - { src: "../docker-compose.develop.yml", dest: "docker-compose.develop.yml" }
+    
+    - name: Pull Docker images
+      docker_image:
+        name: "{{ item }}"
+        tag: "{{ image_tag }}"
+        source: pull
+      loop:
+        - "{{ frontend_image }}"
+        - "{{ backend_image }}"
       
-    - name: Run Docker container for development
-      docker_container:
-        name: "demo-website-develop"
-        image: "{{ image_name }}:{{ image_tag }}"
-        state: started
-        restart_policy: unless-stopped
-        ports:
-          - "8080:80"
-        env:
-          DEPLOY_ENV: develop
-      when: deploy_env | default('production') == 'develop'
-      
-    - name: Run Docker container for production
-      docker_container:
-        name: "demo-website-production"
-        image: "{{ image_name }}:{{ image_tag }}"
-        state: started
-        restart_policy: unless-stopped
-        ports:
-          - "8181:80"
-        env:
-          DEPLOY_ENV: production
+    - name: Start services with Docker Compose v2 (production)
+      community.docker.docker_compose_v2:
+        project_src: /opt/demo-website
+        files:
+          - docker-compose.yml
+        state: present
+        scale:
+          backend: 3
+      environment:
+        IMAGE_TAG: "{{ image_tag }}"
       when: deploy_env | default('production') == 'production'
       
-    - name: Wait for container to be ready
+    - name: Start services with Docker Compose v2 (development)
+      community.docker.docker_compose_v2:
+        project_src: /opt/demo-website
+        files:
+          - docker-compose.yml
+          - docker-compose.develop.yml
+        state: present
+        scale:
+          backend: 3
+      environment:
+        IMAGE_TAG: "{{ image_tag }}"
+      when: deploy_env | default('production') == 'develop'
+        
+    - name: Wait for application to be ready
       wait_for:
         port: "{{ '8080' if (deploy_env | default('production')) == 'develop' else '8181' }}"
         host: localhost
-        delay: 5
-        timeout: 30
+        delay: 10
+        timeout: 60

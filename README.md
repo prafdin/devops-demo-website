@@ -13,8 +13,14 @@ demo-website/
 │   ├── inventory.yml# Список серверов
 │   ├── setup.yml    # Playbook для установки Docker
 │   └── deploy.yml   # Playbook для запуска контейнеров
+├── backend/         # Python Flask API сервис
+│   ├── app.py      # Flask приложение с /info endpoint
+│   ├── Dockerfile  # Docker образ для backend
+│   └── requirements.txt # Python зависимости
 ├── Dockerfile       # Docker образ для nginx контейнера
 ├── .dockerignore    # Игнорируемые файлы при сборке образа
+├── docker-compose.yml # Docker Compose конфигурация
+├── docker-compose.develop.yml # Development настройки
 ├── index.html      # Основная страница сайта с ракеткой 🚀
 ├── nginx.conf      # Конфигурация nginx для контейнера
 ├── test.sh         # Тестирование ракетки на сайте
