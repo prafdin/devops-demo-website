@@ -13,6 +13,9 @@ demo-website/
 │   ├── inventory.yml# Список серверов
 │   ├── setup.yml    # Playbook для установки Docker
 │   └── deploy.yml   # Playbook для запуска контейнеров
+├── packer/          # Infrastructure as Code
+│   ├── ...          # Файлы автоустановки Ubuntu
+│   └── README.md    # Документация по содержимому packer директории 
 ├── backend/         # Python Flask API сервис
 │   ├── app.py      # Flask приложение с /info endpoint
 │   ├── Dockerfile  # Docker образ для backend
@@ -28,40 +31,12 @@ demo-website/
 └── README.md       # Документация проекта
 ```
 
-## Требования к серверу
-
-Для автоматического деплоя сервер должен быть настроен:
-
-- **SSH доступ по ключу** - публичный ключ в `~/.ssh/authorized_keys`
-- **Sudo без пароля** - пользователь в группе sudo с `NOPASSWD`
-- **Python 3** - для выполнения Ansible playbooks  
-- **Docker** - будет установлен автоматически через Ansible
 
 ## Быстрый запуск
-
-1. Клонируйте репозиторий:
-   ```bash
-   git clone https://github.com/prafdin/devops-demo-website.git
-   cd devops-demo-website
-   ```
-
-2. Установите frp: (токен может измениться!)
-   ```bash
-   sudo ./install-frp.sh course.prafdin.ru mytoken prafdin
-   ```
-
-3. Настройте сервер для автоматического деплоя:
-   ```bash
-   # Создание пары ключей для ssh доступа к ВМ
-   ssh-keygen -t rsa
-   cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-      
-   # Настройте sudo без пароля для пользователя
-   echo "user ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/user
-   ```
-
-4. Настройте GitHub Actions переменные и секреты:
+1. [Создайте](packer/README.md) образ виртуальной машины с помощью Packer 
+2. Разверните виртуальную машину из созданного образа  
+3. Настройте GitHub Actions переменные и секреты:
    - Variables: DEPLOY_HOST, DEPLOY_USER, DEPLOY_PORT
    - Secrets: SSH_PRIVATE_KEY
 
-5. Сайт должен быть доступен по адресу http://app.prafdin.course.prafdin.ru/
+4. Создайте push событие в репозитории, которое запустит CICD пайплайн и развернет сайт

@@ -1,0 +1,5 @@
+output-ubuntu/
+id_rsa
+id_rsa.pub
+vars.json
+manifest.json
