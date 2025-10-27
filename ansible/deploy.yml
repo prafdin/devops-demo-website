@@ -34,7 +34,7 @@
 
     - name: Start services with Docker Compose v2
       community.docker.docker_compose_v2:
-        project_src: /opt/demo-website
+        project_src: "{{ deployment_dir }}"
         files:
           - docker-compose.yml
           - "docker-compose.{{ deploy_env }}.yml"
