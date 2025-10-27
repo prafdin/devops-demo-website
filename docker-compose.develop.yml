@@ -1,5 +1,7 @@
 version: '3.8'
 
+name: demo-website-develop
+
 services:
   nginx:
     ports:

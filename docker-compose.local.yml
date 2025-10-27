@@ -1,0 +1,13 @@
+version: '3.8'
+
+name: demo-website-local
+
+services:
+  nginx:
+    image: demo-website-nginx:latest
+    build: .
+    ports:
+      - "8080:80"
+  backend:
+    image: demo-website-backend:latest
+    build: ./backend

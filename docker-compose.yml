@@ -1,7 +1,5 @@
 version: '3.8'
 
-name: demo-website
-
 services:
   nginx:
     image: ghcr.io/prafdin/devops-demo-website:${IMAGE_TAG}
