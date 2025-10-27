@@ -5,8 +5,6 @@ name: demo-website
 services:
   nginx:
     image: ghcr.io/prafdin/devops-demo-website:${IMAGE_TAG}
-    ports:
-      - "8181:80"
     depends_on:
       - backend
 

@@ -27,8 +27,9 @@
         mode: '0644'
       loop:
         - { src: "../docker-compose.yml", dest: "docker-compose.yml" }
+        - { src: "../docker-compose.production.yml", dest: "docker-compose.production.yml" }
         - { src: "../docker-compose.develop.yml", dest: "docker-compose.develop.yml" }
-    
+
     - name: Pull Docker images
       docker_image:
         name: "{{ item }}"
@@ -43,6 +44,7 @@
         project_src: /opt/demo-website
         files:
           - docker-compose.yml
+          - docker-compose.production.yml
         state: present
         scale:
           backend: 3
