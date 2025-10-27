@@ -6,29 +6,28 @@
     frontend_image: "ghcr.io/{{ github_repository_owner | default('prafdin') }}/devops-demo-website"
     backend_image: "ghcr.io/{{ github_repository_owner | default('prafdin') }}/devops-demo-website-backend"
     image_tag: "{{ image_tag | default('latest') }}"
-    
+    deployment_dir: "/opt/demo-website-{{ deploy_env }}"
   tasks:
     - name: Create deployment directory
       file:
-        path: /opt/demo-website
+        path: "{{ deployment_dir }}"
         state: directory
         mode: '0755'
         
     - name: Stop existing services
       community.docker.docker_compose_v2:
-        project_src: /opt/demo-website
+        project_src: "{{ deployment_dir }}"
         state: absent
       ignore_errors: yes
         
     - name: Copy docker-compose files
       copy:
         src: "{{ item.src }}"
-        dest: "/opt/demo-website/{{ item.dest }}"
+        dest: "{{ deployment_dir }}/{{ item.dest }}"
         mode: '0644'
       loop:
         - { src: "../docker-compose.yml", dest: "docker-compose.yml" }
-        - { src: "../docker-compose.production.yml", dest: "docker-compose.production.yml" }
-        - { src: "../docker-compose.develop.yml", dest: "docker-compose.develop.yml" }
+        - { src: "../docker-compose.{{ deploy_env }}.yml", dest: "docker-compose.{{ deploy_env }}.yml" }
 
     - name: Pull Docker images
       docker_image:
@@ -39,35 +38,21 @@
         - "{{ frontend_image }}"
         - "{{ backend_image }}"
       
-    - name: Start services with Docker Compose v2 (production)
+    - name: Start services with Docker Compose v2
       community.docker.docker_compose_v2:
         project_src: /opt/demo-website
         files:
           - docker-compose.yml
-          - docker-compose.production.yml
+          - "docker-compose.{{ deploy_env }}.yml"
         state: present
         scale:
           backend: 3
       environment:
         IMAGE_TAG: "{{ image_tag }}"
-      when: deploy_env | default('production') == 'production'
-      
-    - name: Start services with Docker Compose v2 (development)
-      community.docker.docker_compose_v2:
-        project_src: /opt/demo-website
-        files:
-          - docker-compose.yml
-          - docker-compose.develop.yml
-        state: present
-        scale:
-          backend: 3
-      environment:
-        IMAGE_TAG: "{{ image_tag }}"
-      when: deploy_env | default('production') == 'develop'
         
     - name: Wait for application to be ready
       wait_for:
-        port: "{{ '8080' if (deploy_env | default('production')) == 'develop' else '8181' }}"
+        port: "{{ '8080' if deploy_env == 'develop' else '8181' }}"
         host: localhost
         delay: 10
         timeout: 60
