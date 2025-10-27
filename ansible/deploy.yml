@@ -13,21 +13,6 @@
         path: "{{ deployment_dir }}"
         state: directory
         mode: '0755'
-        
-    - name: Stop existing services
-      community.docker.docker_compose_v2:
-        project_src: "{{ deployment_dir }}"
-        state: absent
-      ignore_errors: yes
-        
-    - name: Copy docker-compose files
-      copy:
-        src: "{{ item.src }}"
-        dest: "{{ deployment_dir }}/{{ item.dest }}"
-        mode: '0644'
-      loop:
-        - { src: "../docker-compose.yml", dest: "docker-compose.yml" }
-        - { src: "../docker-compose.{{ deploy_env }}.yml", dest: "docker-compose.{{ deploy_env }}.yml" }
 
     - name: Pull Docker images
       docker_image:
@@ -37,7 +22,16 @@
       loop:
         - "{{ frontend_image }}"
         - "{{ backend_image }}"
-      
+
+    - name: Copy docker-compose files
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ deployment_dir }}/{{ item.dest }}"
+        mode: '0644'
+      loop:
+        - { src: "../docker-compose.yml", dest: "docker-compose.yml" }
+        - { src: "../docker-compose.{{ deploy_env }}.yml", dest: "docker-compose.{{ deploy_env }}.yml" }
+
     - name: Start services with Docker Compose v2
       community.docker.docker_compose_v2:
         project_src: /opt/demo-website
