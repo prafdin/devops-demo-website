@@ -19,7 +19,7 @@ locals {
 variable "vm_name" {
   type        = string
   description = "Name of the VM"
-  default     = "ubuntu-docker-demo"
+  default     = "ubuntu-course-demo"
 }
 
 variable "frp_token" {
@@ -66,7 +66,7 @@ source "virtualbox-iso" "ubuntu" {
   # HTTP Configuration for autoinstall
   http_content = {
     "/user-data"     = templatefile(
-      "user-data.pkrtpl.hcl",
+      "http/user-data.pkrtpl.hcl",
       {
         authorized_key = file(var.ssh_public_key_file)
       }
