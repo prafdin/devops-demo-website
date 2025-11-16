@@ -2,7 +2,7 @@ name: DevOps Demo Pipeline
 
 on:
   push:
-    branches: [ compose-demo, develop ]
+    branches: [ compose-demo, develop, devsecops ]
 
 jobs:
   pipeline:
