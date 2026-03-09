@@ -7,7 +7,7 @@
 ```
 demo-website/
 ├── .github/workflows/
-│   └── pipeline.yml # GitHub Actions CI/CD pipeline
+│   └── deploy.yml # GitHub Actions CI/CD pipeline
 ├── index.html      # Основная страница сайта с ракеткой 🚀
 ├── nginx.conf      # Конфигурация веб-сервера
 ├── deploy.sh       # Скрипт автоматического развертывания
