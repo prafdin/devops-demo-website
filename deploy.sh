@@ -2,9 +2,6 @@
 
 # Скрипт деплоя, запускается на GitHub runner
 # Копирует файлы на удаленный сервер через SSH/SCP
-
-ENVIRONMENT=${1:-production}
-
 echo "🚀 Развертывание демо-сайта через CI/CD..."
 
 # Проверяем переменные окружения
@@ -18,6 +15,7 @@ fi
 
 # Устанавливаем порт по умолчанию если не задан
 DEPLOY_PORT=${DEPLOY_PORT:-22}
+DEPLOY_DIR="/var/www/demo"
 
 # Проверяем наличие файлов для деплоя
 if [ ! -f "index.html" ] || [ ! -f "nginx.conf" ]; then
@@ -25,13 +23,6 @@ if [ ! -f "index.html" ] || [ ! -f "nginx.conf" ]; then
     exit 1
 fi
 
-if [ "$ENVIRONMENT" = "develop" ]; then
-    DEPLOY_DIR="/var/www/demo-test"
-    echo "🧪 Развертывание в ТЕСТОВОЕ окружение"
-else
-    DEPLOY_DIR="/var/www/demo"
-    echo "🏭 Развертывание в ПРОДАКШН окружение"
-fi
 
 echo "📋 Параметры деплоя:"
 echo "   Сервер: $DEPLOY_HOST:$DEPLOY_PORT"

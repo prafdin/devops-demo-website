@@ -2,7 +2,6 @@ name: DevOps Demo Pipeline
 
 on:
   push:
-    branches: [ cicd-demo, develop ]
 
 jobs:
   pipeline:
@@ -27,15 +26,6 @@ jobs:
         DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
         DEPLOY_USER: ${{ vars.DEPLOY_USER }}
         DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
-      run: |
-        # Определяем окружение по ветке
-        if [ "${{ github.ref_name }}" = "develop" ]; then
-          ENVIRONMENT="develop"
-          echo "🧪 Деплой в ТЕСТОВОЕ окружение"
-        else
-          ENVIRONMENT="production"
-          echo "🏭 Деплой в ПРОДАКШН окружение"
-        fi
-        
+      run: |        
         echo "🚀 Запуск деплоя через deploy.sh..."
-        ./deploy.sh $ENVIRONMENT
+        ./deploy.sh
