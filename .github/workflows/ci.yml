@@ -1,0 +1,20 @@
+name: CI pipeline
+
+on:
+  pull_request:
+    branches:
+      - cicd-pullrequest-demo
+    types: [opened, synchronize]
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout код
+      uses: actions/checkout@v4
+      
+    - name: Запуск тестов
+      run: |
+        echo "🧪 Запуск тестов на GitHub runner..."
+        ./test.sh
