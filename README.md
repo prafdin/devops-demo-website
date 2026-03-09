@@ -7,6 +7,7 @@
 ```
 demo-website/
 ├── .github/workflows/
+│   └── ci.yml # Проверки при создании pull request
 │   └── deploy.yml # GitHub Actions CI/CD pipeline
 ├── index.html      # Основная страница сайта с ракеткой 🚀
 ├── nginx.conf      # Конфигурация веб-сервера
