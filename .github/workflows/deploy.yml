@@ -3,7 +3,7 @@ name: Deploy pipeline
 on:
   push:
     branches:
-      - cicd-demo'
+      - cicd-demo
 
 jobs:
   pipeline:
