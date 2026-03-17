@@ -7,8 +7,9 @@
 ```
 demo-website/
 ├── .github/workflows/
-│   └── ci.yml # Проверки при создании pull request
-│   └── deploy.yml # GitHub Actions CI/CD pipeline
+│   ├── ci.yml # Проверки при создании pull request
+│   ├── deploy-dev.yml # Деплой пайплайн для development окружения
+│   └── deploy-prod.yml # Деплой пайплайн для production окружения
 ├── index.html      # Основная страница сайта с ракеткой 🚀
 ├── nginx.conf      # Конфигурация веб-сервера
 ├── deploy.sh       # Скрипт автоматического развертывания
@@ -42,7 +43,7 @@ demo-website/
    
 3. Установите frp: (токен может измениться!)
    ```bash
-   sudo ./install-frp.sh course.prafdin.ru mytoken prafdin
+   sudo ./install-frp.sh course.prafdin.ru mytoken prafdin 2022
    ```
 
 4. Настройте сервер для автоматического деплоя:
@@ -55,7 +56,7 @@ demo-website/
    echo "user ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/user
    ```
 
-5. Настройте GitHub Actions переменные и секреты:
+5. Настройте GitHub Actions переменные и секреты для `development` и `production` окружения:
    - Variables: DEPLOY_HOST, DEPLOY_USER, DEPLOY_PORT
    - Secrets: SSH_PRIVATE_KEY
 
