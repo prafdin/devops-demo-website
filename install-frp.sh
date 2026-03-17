@@ -14,12 +14,14 @@ set -e
 SERVER_ADDR=${1:-"course.prafdin.ru"}
 AUTH_TOKEN=${2:-"mytoken"}
 USERNAME=${3:-"prafdin"}
+TCP_PORT=${4:-"2022"}
 
 echo "🚀 Установка FRP клиента..."
 echo "📋 Параметры:"
 echo "   Сервер: $SERVER_ADDR"
 echo "   Токен: ${AUTH_TOKEN:0:8}***"
 echo "   Пользователь: $USERNAME"
+echo "   TCP порт: $TCP_PORT"
 echo ""
 
 # Проверяем права суперпользователя
@@ -27,10 +29,10 @@ if [[ $EUID -ne 0 ]]; then
    echo "❌ Этот скрипт должен запускаться с правами root (sudo)"
    echo ""
    echo "📝 Использование:"
-   echo "   sudo ./install-frp.sh [SERVER_ADDR] [AUTH_TOKEN] [USERNAME]"
+   echo "   sudo ./install-frp.sh [SERVER_ADDR] [AUTH_TOKEN] [USERNAME] [TCP_PORT]"
    echo ""
    echo "🔧 Примеры:"
-   echo "   sudo ./install-frp.sh course.prafdin.ru mytoken prafdin"
+   echo "   sudo ./install-frp.sh course.prafdin.ru mytoken prafdin 2022"
    exit 1
 fi
 
@@ -79,7 +81,7 @@ name = "ssh-$USERNAME"
 type = "tcp"
 localIP = "127.0.0.1"
 localPort = 22
-remotePort = 2022
+remotePort = $TCP_PORT
 EOF
 
 echo "✅ Конфигурация сгенерирована в /etc/frp/frpc.toml"
@@ -110,7 +112,7 @@ echo ""
 echo "🌐 URLs для вашей конфигурации:"
 echo "   Webhook URL: http://webhook.$USERNAME.$SERVER_ADDR"
 echo "   App URLs: http://app.$USERNAME.$SERVER_ADDR"
-echo "   SSH доступ: ssh user@$SERVER_ADDR -p 2022 (для GitHub Actions)"
+echo "   SSH доступ: ssh user@$SERVER_ADDR -p $TCP_PORT (для GitHub Actions)"
 echo ""
 echo "⚙️  Для изменения конфигурации отредактируйте:"
 echo "   /etc/frp/frpc.toml"
