@@ -9,7 +9,9 @@ jobs:
   pipeline:
     environment: development
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: read
+      packages: write
     steps:
     - name: Checkout код
       uses: actions/checkout@v4
