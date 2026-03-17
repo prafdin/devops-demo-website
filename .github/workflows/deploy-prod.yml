@@ -3,10 +3,11 @@ name: Deploy pipeline
 on:
   push:
     branches:
-      - cicd-pullrequest-demo
+      - envs-demo
 
 jobs:
   pipeline:
+    environment: production
     runs-on: ubuntu-latest
     
     steps:
