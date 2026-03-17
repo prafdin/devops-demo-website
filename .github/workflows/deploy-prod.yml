@@ -3,7 +3,7 @@ name: Deploy pipeline
 on:
   push:
     branches:
-      - envs-demo
+      - container-demo
 
 jobs:
   pipeline:
@@ -18,17 +18,38 @@ jobs:
       run: |
         echo "🧪 Запуск тестов на GitHub runner..."
         ./test.sh
-      
-    - name: Setup SSH Agent
-      uses: webfactory/ssh-agent@v0.7.0
+
+    - name: Build Docker image
+      run: |
+        echo "🐳 Сборка Docker образа..."
+        docker build -t ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }} .
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v2
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push Docker image
+      run: |
+        echo "📦 Отправка образа в registry..."
+        docker push ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }}
+
+    - name: Deploy to Server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ vars.DEPLOY_HOST }}
+        username: ${{ vars.DEPLOY_USER }}
+        port: ${{ vars.DEPLOY_PORT }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          export IMAGE_NAME="ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }}"
+          export CONTAINER_NAME="devops-demo-website-PROD"
+          docker pull $IMAGE_NAME
+          docker rm -f $CONTAINER_NAME || true
+          docker run -d \
+            --name $CONTAINER_NAME \
+            -p 8181:80 \
+            $IMAGE_NAME
     
-    - name: Запуск деплоя
-      env:
-        DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
-        DEPLOY_USER: ${{ vars.DEPLOY_USER }}
-        DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
-      run: |        
-        echo "🚀 Запуск деплоя через deploy.sh..."
-        ./deploy.sh

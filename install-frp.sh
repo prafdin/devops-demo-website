@@ -67,13 +67,21 @@ localIP = "127.0.0.1"
 localPort = 8080
 customDomains = ["webhook.$USERNAME.$SERVER_ADDR"]
 
-# Прокси для веб-приложения
+# Прокси для продакшн приложения
 [[proxies]]
 name = "app-$USERNAME"
 type = "http"
 localIP = "127.0.0.1"
 localPort = 8181
 customDomains = ["app.$USERNAME.$SERVER_ADDR"]
+
+# Прокси для тестового приложения
+[[proxies]]
+name = "app-$USERNAME"
+type = "http"
+localIP = "127.0.0.1"
+localPort = 8282
+customDomains = ["app-test.$USERNAME.$SERVER_ADDR"]
 
 # Прокси для SSH (для GitHub Actions)
 [[proxies]]
@@ -111,7 +119,7 @@ echo "   sudo nano /etc/frp/frpc.toml   # Редактировать конфи�
 echo ""
 echo "🌐 URLs для вашей конфигурации:"
 echo "   Webhook URL: http://webhook.$USERNAME.$SERVER_ADDR"
-echo "   App URLs: http://app.$USERNAME.$SERVER_ADDR"
+echo "   App URLs: http://app.$USERNAME.$SERVER_ADDR http://app-test.$USERNAME.$SERVER_ADDR"
 echo "   SSH доступ: ssh user@$SERVER_ADDR -p $TCP_PORT (для GitHub Actions)"
 echo ""
 echo "⚙️  Для изменения конфигурации отредактируйте:"
