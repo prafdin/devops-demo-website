@@ -77,7 +77,7 @@ customDomains = ["app.$USERNAME.$SERVER_ADDR"]
 
 # Прокси для тестового приложения
 [[proxies]]
-name = "app-$USERNAME"
+name = "app-test-$USERNAME"
 type = "http"
 localIP = "127.0.0.1"
 localPort = 8282
