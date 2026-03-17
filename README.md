@@ -61,3 +61,9 @@ demo-website/
    - Secrets: SSH_PRIVATE_KEY
 
 6. Сайт должен быть доступен по адресу http://app.prafdin.course.prafdin.ru/
+
+## Локальный запуск
+```bash
+docker build . -t devops-demo-website:latest
+docker run -p 8181:80 -d --rm devops-demo-website:latest
+```
