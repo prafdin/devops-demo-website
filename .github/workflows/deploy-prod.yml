@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     uses: ./.github/workflows/deploy.yml
+    permissions:
+      contents: read
+      packages: write
     with:
       environment: production
       container_name: devops-demo-website-PROD
