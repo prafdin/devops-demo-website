@@ -57,7 +57,7 @@ jobs:
           port: ${{ vars.DEPLOY_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: ./docker-compose.yml
-          target: /opt/app/${{ inputs.environment }}/docker-compose.yml
+          target: /opt/app/${{ inputs.environment }}
 
       - name: Copy .env to server
         uses: appleboy/scp-action@master
@@ -67,7 +67,7 @@ jobs:
           port: ${{ vars.DEPLOY_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: ./.env
-          target: /opt/app/${{ inputs.environment }}/.env
+          target: /opt/app/${{ inputs.environment }}
 
       - name: Deploy to Server
         uses: appleboy/ssh-action@master
