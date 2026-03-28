@@ -78,4 +78,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -x
+            cd /opt/app/${{ inputs.environment }}
             docker compose up -d --pull always --remove-orphans
