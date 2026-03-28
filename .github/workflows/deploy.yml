@@ -77,4 +77,5 @@ jobs:
           port: ${{ vars.DEPLOY_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -x
             docker compose up -d --pull always --remove-orphans
