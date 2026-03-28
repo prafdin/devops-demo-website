@@ -1,57 +1,14 @@
-name: Deploy pipeline
+name: Deploy PROD
 
 on:
   push:
     branches:
-      - container-demo
+      - docker-compose-demo
 
 jobs:
-  pipeline:
-    environment: production
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-    - name: Checkout код
-      uses: actions/checkout@v4
-      
-    - name: Запуск тестов
-      run: |
-        echo "🧪 Запуск тестов на GitHub runner..."
-        ./test.sh
-
-    - name: Build Docker image
-      run: |
-        echo "🐳 Сборка Docker образа..."
-        docker build -t ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }} .
-
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v2
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Push Docker image
-      run: |
-        echo "📦 Отправка образа в registry..."
-        docker push ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }}
-
-    - name: Deploy to Server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ vars.DEPLOY_HOST }}
-        username: ${{ vars.DEPLOY_USER }}
-        port: ${{ vars.DEPLOY_PORT }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          export IMAGE_NAME="ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }}"
-          export CONTAINER_NAME="devops-demo-website-PROD"
-          docker pull $IMAGE_NAME
-          docker rm -f $CONTAINER_NAME || true
-          docker run -d \
-            --name $CONTAINER_NAME \
-            -p 8181:80 \
-            $IMAGE_NAME
-    
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: production
+      container_name: devops-demo-website-PROD
+      port: "8181"
