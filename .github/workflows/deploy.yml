@@ -22,6 +22,9 @@ jobs:
       packages: write
 
     steps:
+      - name: Checkout код
+        uses: actions/checkout@v4
+
       - name: Build Docker image
         run: |
           docker build -t ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }} .
