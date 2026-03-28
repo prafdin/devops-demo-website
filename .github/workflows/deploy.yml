@@ -28,6 +28,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }} .
+          docker build -t ghcr.io/${{ github.repository_owner }}/devops-demo-website-backend:${{ github.sha }} ./backend
 
       - name: Login to GHCR
         uses: docker/login-action@v2
@@ -39,6 +40,34 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/devops-demo-website-backend:${{ github.sha }}
+
+      - name: Create .env file
+        run: |
+          echo "FRONTEND_IMAGE=ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }}" > .env
+          echo "BACKEND_IMAGE=ghcr.io/${{ github.repository_owner }}/devops-demo-website-backend:${{ github.sha }}" >> .env
+          echo "PORT=${{ inputs.port }}" >> .env
+          echo "COMPOSE_PROJECT_NAME=${{ inputs.environment }}" >> .env
+
+      - name: Copy docker-compose.yml to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ vars.DEPLOY_HOST }}
+          username: ${{ vars.DEPLOY_USER }}
+          port: ${{ vars.DEPLOY_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: ./docker-compose.yml
+          target: /opt/app/${{ inputs.environment }}/docker-compose.yml
+
+      - name: Copy .env to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ vars.DEPLOY_HOST }}
+          username: ${{ vars.DEPLOY_USER }}
+          port: ${{ vars.DEPLOY_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: ./.env
+          target: /opt/app/${{ inputs.environment }}/.env
 
       - name: Deploy to Server
         uses: appleboy/ssh-action@master
@@ -48,12 +77,4 @@ jobs:
           port: ${{ vars.DEPLOY_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            export IMAGE_NAME="ghcr.io/${{ github.repository_owner }}/devops-demo-website:${{ github.sha }}"
-            export CONTAINER_NAME="${{ inputs.container_name }}"
-
-            docker pull $IMAGE_NAME
-            docker rm -f $CONTAINER_NAME || true
-            docker run -d \
-              --name $CONTAINER_NAME \
-              -p ${{ inputs.port }}:80 \
-              $IMAGE_NAME
+            docker compose up -d --pull always --remove-orphans
