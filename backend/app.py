@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 import socket
 import datetime
+import requests
 
 app = Flask(__name__)
 HTTPBIN_DELAY_URL = "https://httpbin.org/delay/0.001"
