@@ -28,21 +28,83 @@
             border-radius: 5px;
             margin: 20px 0;
         }
+        .api-section {
+            background-color: #f0f8ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #4d90cd;
+        }
+        .api-button {
+            background-color: #4d90cd;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .api-button:hover {
+            background-color: #3a7bb8;
+        }
+        .api-result {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🚀 DevOps Hi Демонстрация 🚀</h1>
-        <div class="info">
-            <p><strong>Версия:</strong> 1.0</p>
-            <p><strong>Дата:</strong> <span id="date"></span></p>
-        </div>
-        <p>Это очень простой пример того, как Git становится источником правды для всей системы.</p>
-        <p>Весь код, конфигурация и скрипты развертывания хранятся в одном репозитории!</p>
+<div class="container">
+    <h1>🚀 DevOps Демонстрация</h1>
+    <div class="info">
+        <p><strong>Версия:</strong> 1.0</p>
+        <p><strong>Дата:</strong> <span id="date"></span></p>
     </div>
+    <p>Это простой пример того, как Git становится источником правды для всей системы.</p>
+    <p>Весь код, конфигурация и скрипты развертывания хранятся в одном репозитории!</p>
 
-    <script>
-        document.getElementById('date').textContent = new Date().toLocaleDateString('ru-RU');
-    </script>
+    <div class="api-section">
+        <h3>🔧 Тестирование Backend API</h3>
+        <p>Нажмите кнопку, чтобы получить данные от backend сервиса. Обратите внимание на hostname - каждый запрос может попасть на разный backend!</p>
+        <button class="api-button" onclick="fetchBackendInfo()">Получить данные от backend</button>
+        <div id="api-result" class="api-result" style="display: none;"></div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('date').textContent = new Date().toLocaleDateString('ru-RU');
+
+    async function fetchBackendInfo() {
+        const resultDiv = document.getElementById('api-result');
+        const button = document.querySelector('.api-button');
+
+        button.disabled = true;
+        button.textContent = 'Загрузка...';
+        resultDiv.style.display = 'block';
+        resultDiv.textContent = 'Отправка запроса...';
+
+        try {
+            const response = await fetch('/api/info');
+            const data = await response.json();
+
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+            resultDiv.style.backgroundColor = '#d4edda';
+            resultDiv.style.borderColor = '#c3e6cb';
+        } catch (error) {
+            resultDiv.textContent = `Ошибка: ${error.message}`;
+            resultDiv.style.backgroundColor = '#f8d7da';
+            resultDiv.style.borderColor = '#f5c6cb';
+        }
+
+        button.disabled = false;
+        button.textContent = 'Получить данные от backend';
+    }
+</script>
 </body>
 </html>
