@@ -3,7 +3,7 @@ import socket
 import datetime
 
 app = Flask(__name__)
-HTTPBIN_DELAY_URL = "https://httpbin.org/delay/0.1"
+HTTPBIN_DELAY_URL = "https://httpbin.org/delay/0.001"
 
 @app.route('/info')
 def get_info():
