@@ -1,12 +1,13 @@
-FROM python:3.11-slim
+FROM ubuntu:22.04
+
+RUN apt-get update && \
+    apt-get install -y build-essential libcurl4-openssl-dev && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY main.cpp .
 
-COPY app.py .
+RUN g++ -std=c++17 main.cpp -o server -lcurl
 
-EXPOSE 5000
-
-CMD ["python", "app.py"]
+CMD ["./server"]
