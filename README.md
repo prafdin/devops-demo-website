@@ -36,15 +36,16 @@ demo-website/
    cd devops-demo-website
    ```
 
-2. Установите nginx:
-   ```bash
-   sudo ./install-nginx.sh
-   ```
-   
-3. Установите frp: (токен может измениться!)
+2. Установите frp: (токен может измениться!)
    ```bash
    sudo ./install-frp.sh course.prafdin.ru mytoken prafdin 2022
    ```
+
+3. Создайте директорию для приложения и предоставьте доступ к ней на запись для вашего пользователя
+```bash
+sudo mkdir /opt/app
+sudo chown $USER:$USER /opt/app
+```
 
 4. Настройте сервер для автоматического деплоя:
    ```bash
@@ -62,8 +63,10 @@ demo-website/
 
 6. Сайт должен быть доступен по адресу http://app.prafdin.course.prafdin.ru/
 
-## Локальный запуск
+## Замер RPS
+Для замера используется инструмент [wg/wrk])(https://github.com/wg/wrk).
+
+Тестирование производительности на примере 10 запросов в секунду (-c10) из одного треда (t1) на протяжении 10 секунд (d10s): 
 ```bash
-docker build . -t devops-demo-website:latest
-docker run -p 8181:80 -d --rm devops-demo-website:latest
+wrk -t1 -c10 -d10s http://app.prafdin.course.prafdin.ru//api/info --latency
 ```
