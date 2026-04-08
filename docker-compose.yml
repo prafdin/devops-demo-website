@@ -9,4 +9,6 @@ services:
       - backend
 
   backend:
+    deploy:
+      replicas: 20
     image: ${BACKEND_IMAGE}
