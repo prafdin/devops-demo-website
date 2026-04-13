@@ -8,15 +8,22 @@
 demo-website/
 ├── .github/workflows/
 │   ├── ci.yml # Проверки при создании pull request
-│   ├── deploy-dev.yml # Деплой пайплайн для development окружения
-│   └── deploy-prod.yml # Деплой пайплайн для production окружения
+│   ├── deploy.yml # Переиспользуемый workflow для деплоя приложения
+│   ├── deploy-dev.yml # Вызов деплой workflow для development окружения
+│   └── deploy-prod.yml # Вызов деплой workflow для production окружения
+├── backend/
+│   ├── app.py # Код backend приложения
+│   ├── Dockerfile # Файл для сборки бекенд докер имеджа
+│   └── requirements.txt # Зависимости backend приложения
+├── .dockerignore   # Перечисляем пути до файлов, которые будут игнорироваться докер билдером    
+├── docker-compose.yml   # Манифест docker compose для деплоя приложения    
+├── Dockerfile   # Файл для сборки фронтенд докер имеджа    
 ├── index.html      # Основная страница сайта с ракеткой 🚀
-├── nginx.conf      # Конфигурация веб-сервера
-├── deploy.sh       # Скрипт автоматического развертывания
-├── test.sh         # Тестирование ракетки на сайте
-├── install-nginx.sh # Скрипт установки nginx
 ├── install-frp.sh # Скрипт установки и настройки frp
-└── README.md       # Документация проекта
+├── install-nginx.sh # Скрипт установки nginx
+├── nginx.conf      # Конфигурация веб-сервера
+├── README.md       # Документация проекта
+└── test.sh         # Тестирование ракетки на сайте
 ```
 
 ## Требования к серверу
