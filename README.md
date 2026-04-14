@@ -48,13 +48,7 @@ demo-website/
    sudo ./install-frp.sh course.prafdin.ru mytoken prafdin 2022
    ```
 
-3. Создайте директорию для приложения и предоставьте доступ к ней на запись для вашего пользователя
-```bash
-sudo mkdir /opt/app
-sudo chown $USER:$USER /opt/app
-```
-
-4. Настройте сервер для автоматического деплоя:
+3. Настройте сервер для автоматического деплоя:
    ```bash
    # Создание пары ключей для ssh доступа к ВМ
    ssh-keygen -t rsa
@@ -64,11 +58,19 @@ sudo chown $USER:$USER /opt/app
    echo "user ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/user
    ```
 
-5. Настройте GitHub Actions переменные и секреты для `development` и `production` окружения:
+4. Создайте директорию для приложения и предоставьте доступ к ней на запись для вашего пользователя
+```bash
+sudo mkdir /opt/app
+sudo chown $USER:$USER /opt/app
+```
+
+5. Установите Docker и Docker Compose https://docs.docker.com/engine/install/
+
+6. Настройте GitHub Actions переменные и секреты для `development` и `production` окружения:
    - Variables: DEPLOY_HOST, DEPLOY_USER, DEPLOY_PORT
    - Secrets: SSH_PRIVATE_KEY
 
-6. Сайт должен быть доступен по адресу http://app.prafdin.course.prafdin.ru/
+7. Сайт должен быть доступен по адресу http://app.prafdin.course.prafdin.ru/
 
 ## Замер RPS
 Для замера используется инструмент [wg/wrk])(https://github.com/wg/wrk).
