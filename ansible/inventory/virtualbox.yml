@@ -1,0 +1,12 @@
+plugin: community.general.virtualbox
+
+running_only: true
+use_guest_properties: true
+
+network_info_path: "/VirtualBox/GuestInfo/Net/1/V4/IP"
+
+compose:
+  ansible_user: "'user'"
+
+groups:
+  stands: "'stand' in (inventory_hostname)"

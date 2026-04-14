@@ -3,7 +3,7 @@ name: Deploy PROD
 on:
   push:
     branches:
-      - docker-compose-demo
+      - ansible-demo
 
 jobs:
   deploy:

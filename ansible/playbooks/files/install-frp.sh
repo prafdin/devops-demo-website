@@ -3,10 +3,10 @@
 # Скрипт установки FRP клиента
 #
 # Использование:
-#   sudo ./install-frp.sh [SERVER_ADDR] [AUTH_TOKEN] [USERNAME]
+#   sudo ./install-frp.sh [SERVER_ADDR] [AUTH_TOKEN] [USERNAME] [SSH_PORT]
 #
 # Примеры:
-#   sudo ./install-frp.sh course.prafdin.ru mytoken prafdin
+#   sudo ./install-frp.sh course.prafdin.ru mytoken prafdin 2022
 
 set -e
 
