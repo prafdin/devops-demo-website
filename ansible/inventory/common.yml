@@ -8,6 +8,9 @@ stands:
     ubuntu_new_prod_stand:
       frp_id: "newprod"
       frp_port: "7111"
+    va_template_stand:
+      frp_id: "template"
+      frp_port: "8888"
   vars:
     frp_domain: "course.prafdin.ru"
     frp_token: !vault |
